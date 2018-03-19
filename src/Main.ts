@@ -145,6 +145,7 @@ class Main extends eui.UILayer {
 
         // virtual stick
         let virtualStick = new VirtualJoystick(this);
+        virtualStick.childrenCreated();
         this.vj = virtualStick;
 
         /*let topMask = new egret.Shape();
@@ -265,10 +266,10 @@ class Main extends eui.UILayer {
         this.cdTimer.start();
 
         //开启虚拟摇杆
-        /*this.vj.start();
+        this.vj.start();
         this.vj.addEventListener("vj_start",this.onVJStart, this);
         this.vj.addEventListener("vj_move", this.onVJChange, this);
-        this.vj.addEventListener("vj_end", this.onVJEnd, this);*/
+        this.vj.addEventListener("vj_end", this.onVJEnd, this);
     }
 
     private countDownFunc() {

@@ -1,7 +1,7 @@
 
 class VirtualJoystick extends eui.Component{
-        private ball:eui.Image;          //圆环
-        private circle:eui.Image;        //小球
+        private ball:egret.Bitmap;          //圆环
+        private circle:egret.Bitmap;        //小球
         private circleRadius:number = 0; //圆环半径
         private ballRadius:number = 0;   //小球半径
         private centerX:number = 0;      //中心点坐标
@@ -13,6 +13,19 @@ class VirtualJoystick extends eui.Component{
                 super();
                 this.skinName = "VirtualJoystickSkin";
                 this.layer = l;
+
+                // 设置虚拟摇杆图片
+                let bmCircle = new egret.Bitmap();
+                let textureCircle: egret.Texture = RES.getRes("circle_png");
+                bmCircle.texture = textureCircle;
+                this.circle = bmCircle;
+                this.layer.addChild(this.circle);
+
+                let bmBall = new egret.Bitmap();
+                let textureBall: egret.Texture = RES.getRes("ball_png");
+                bmBall.texture = textureBall;
+                this.ball = bmBall;
+                this.layer.addChild(this.ball);
         }
  
         public childrenCreated(){
