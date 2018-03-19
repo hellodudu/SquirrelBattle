@@ -259,16 +259,16 @@ class Main extends eui.UILayer {
         this.addChild(this.cdTextField);
 
         this.addChild(this.squirrel);
-        this.x = this.stage.width / 2;
-        this.y = this.stage.height / 2;
+        this.squirrel.x = this.stage.width / 2;
+        this.squirrel.y = this.stage.height / 2;
 
         this.cdTimer.start();
 
         //开启虚拟摇杆
-        this.vj.start();
+        /*this.vj.start();
         this.vj.addEventListener("vj_start",this.onVJStart, this);
         this.vj.addEventListener("vj_move", this.onVJChange, this);
-        this.vj.addEventListener("vj_end", this.onVJEnd, this);
+        this.vj.addEventListener("vj_end", this.onVJEnd, this);*/
     }
 
     private countDownFunc() {
