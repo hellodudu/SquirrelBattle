@@ -1,13 +1,11 @@
 class Squirrel extends egret.Sprite {
-    private layer: eui.UILayer;
     private bm: egret.Bitmap;
-    private speed: number = 10;
+    private speed: number = 15;
     private speedX: number = 0;
     private speedY: number = 0;
 
-    public constructor(l:eui.UILayer){
+    public constructor(){
         super();
-        this.layer = l;
 
         let bmSquirrel = new egret.Bitmap();
         let texture: egret.Texture = RES.getRes("squirrel_png");

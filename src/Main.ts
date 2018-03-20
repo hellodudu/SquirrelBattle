@@ -97,9 +97,10 @@ class Main extends eui.UILayer {
     private cdTextField: egret.TextField;
     private startButton: eui.Button;
     private cdTimer: egret.Timer;
-    private arrayApple: egret.Bitmap[];
+    private heartBeats: egret.Timer;
     private vj: VirtualJoystick;
     private squirrel: Squirrel;
+    private arrayFruit: Fruit[] = new Array();
 
     /**
      * 创建场景界面
@@ -116,7 +117,7 @@ class Main extends eui.UILayer {
         sky.height = stageH;
 
         // squirrel
-        let squirrel = new Squirrel(this);
+        let squirrel = new Squirrel();
         squirrel.anchorOffsetX = squirrel.width / 2;
         squirrel.anchorOffsetY = squirrel.height / 2;
         this.squirrel = squirrel;
@@ -144,6 +145,11 @@ class Main extends eui.UILayer {
         let timer = new egret.Timer(1000, 60);
         timer.addEventListener(egret.TimerEvent.TIMER, this.countDownFunc, this);
         this.cdTimer = timer;
+
+        // 200ms tick
+        let heartBeats = new egret.Timer(200, 0);
+        heartBeats.addEventListener(egret.TimerEvent.TIMER, this.gameHeartBeats, this);
+        this.heartBeats = heartBeats; 
 
         // virtual stick
         let virtualStick = new VirtualJoystick(this);
@@ -242,15 +248,16 @@ class Main extends eui.UILayer {
 
     //每帧更新，人物移动
     private onEnterFrame(){
+        let stageW = this.stage.stageWidth;
+        let stageH = this.stage.stageHeight;
+
         this.squirrel.x += this.squirrel.getSpeedX();
-        this.squirrel.x = Math.max(0, this.squirrel.x);
-        this.squirrel.x = Math.min(this.squirrel.x, this.stage.width - this.squirrel.width);
+        this.squirrel.x = Math.max(0 + this.squirrel.anchorOffsetX, this.squirrel.x);
+        this.squirrel.x = Math.min(this.squirrel.x, stageW - this.squirrel.anchorOffsetX);
 
         this.squirrel.y += this.squirrel.getSpeedY();
-        this.squirrel.y = Math.max(0, this.squirrel.y);
-        this.squirrel.y = Math.min(this.squirrel.y, this.stage.height - this.squirrel.height);
-
-        
+        this.squirrel.y = Math.max(0 + this.squirrel.anchorOffsetY, this.squirrel.y);
+        this.squirrel.y = Math.min(this.squirrel.y, stageH - this.squirrel.anchorOffsetY);
     }
 
     private onStartButtonClick(e: egret.TouchEvent) {
@@ -258,8 +265,8 @@ class Main extends eui.UILayer {
         this.addChild(this.cdTextField);
 
         this.addChild(this.squirrel);
-        this.squirrel.x = this.stage.width / 2;
-        this.squirrel.y = this.stage.height / 2;
+        this.squirrel.x = this.stage.stageWidth / 2;
+        this.squirrel.y = this.stage.stageHeight / 2;
 
         this.cdTimer.start();
 
@@ -270,15 +277,50 @@ class Main extends eui.UILayer {
         this.vj.addEventListener("vj_end", this.onVJEnd, this);
     }
 
+    // count down
     private countDownFunc() {
         this.cdTextField.text = "倒计时：" + (60 - this.cdTimer.currentCount);
 
-        // create apple
-        let apple = this.createBitmapByName("apple_png");
-        apple.x = Math.random() * 1000 % (this.stage.width - apple.width);
-        apple.y = 10;
-        this.addChild(apple);
+        this.createFruit(FruitType.Apple);
+        this.createFruit(FruitType.PineCone);
+    }
 
-        egret.Tween.get( apple ).to( { y:this.stage.height }, 3000, egret.Ease.circIn );
+    private createFruit(type:FruitType) {
+        // create apple
+        let fruit = new Fruit(type);
+        fruit.x = Math.random() * 1000 % (this.stage.stageWidth - fruit.width);
+        fruit.y = 10;
+        this.addChild(fruit);
+
+        // animation
+        egret.Tween.get( fruit ).to( { y:this.stage.stageHeight }, 3000, egret.Ease.circIn );
+
+        // add array
+        this.arrayFruit.push(fruit);
+    }
+
+    // game heart beats
+    private gameHeartBeats() {
+
+        this.checkCollision();        
+
+    }
+
+    // check collision
+    private checkCollision() {
+        let rectSquirrel:egret.Rectangle = this.squirrel.getBounds();
+
+        for (let fruit of this.arrayFruit) {
+            if (fruit.y > this.stage.stageHeight) {
+                this.removeChild(fruit);
+                continue;
+            }
+
+            let rectFruit:egret.Rectangle = fruit.getBounds();
+            if (rectSquirrel.intersects(rectFruit)) {
+                console.log("collision!");
+                this.removeChild(fruit);
+            }
+        }
     }
 }
