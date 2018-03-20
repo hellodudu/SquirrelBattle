@@ -117,6 +117,8 @@ class Main extends eui.UILayer {
 
         // squirrel
         let squirrel = new Squirrel(this);
+        squirrel.anchorOffsetX = squirrel.width / 2;
+        squirrel.anchorOffsetY = squirrel.height / 2;
         this.squirrel = squirrel;
 
         // start button
@@ -230,6 +232,7 @@ class Main extends eui.UILayer {
         let speed = this.squirrel.getSpeed();
         this.squirrel.setSpeedX(Math.cos(angle) * speed);
         this.squirrel.setSpeedY(Math.sin(angle) * speed);
+        this.squirrel.scaleX = (Math.cos(angle) > 0) ? -1 : 1;
     }
 
     //停止摇杆，人物停止移动
@@ -246,17 +249,12 @@ class Main extends eui.UILayer {
         this.squirrel.y += this.squirrel.getSpeedY();
         this.squirrel.y = Math.max(0, this.squirrel.y);
         this.squirrel.y = Math.min(this.squirrel.y, this.stage.height - this.squirrel.height);
+
+        
     }
 
     private onStartButtonClick(e: egret.TouchEvent) {
-        /*let panel = new eui.Panel();
-        panel.title = "Title";
-        panel.horizontalCenter = 0;
-        panel.verticalCenter = 0;
-        this.addChild(panel);*/
-
         this.removeChild(this.startButton);
-
         this.addChild(this.cdTextField);
 
         this.addChild(this.squirrel);
