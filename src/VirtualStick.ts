@@ -19,13 +19,13 @@ class VirtualJoystick extends eui.Component{
                 let textureCircle: egret.Texture = RES.getRes("circle_png");
                 bmCircle.texture = textureCircle;
                 this.circle = bmCircle;
-                this.layer.addChild(this.circle);
+                this.addChild(this.circle);
 
                 let bmBall = new egret.Bitmap();
                 let textureBall: egret.Texture = RES.getRes("ball_png");
                 bmBall.texture = textureBall;
                 this.ball = bmBall;
-                this.layer.addChild(this.ball);
+                this.addChild(this.ball);
         }
  
         public childrenCreated(){
@@ -39,8 +39,8 @@ class VirtualJoystick extends eui.Component{
                 this.anchorOffsetX = this.circleRadius;
                 this.anchorOffsetY = this.circleRadius;
                 //设置小球初始位置
-                this.ball.x = this.centerX;
-                this.ball.y = this.centerY;
+                this.ball.x = this.centerX - this.ball.width/2;
+                this.ball.y = this.centerY - this.ball.height/2;
         }
  
         //启动虚拟摇杆 (监听事件根据实际情况设置，不然点一下UI上的其他按钮，也会触发虚拟摇杆事件。这里只是做demo，就没那么讲究了 - -!)
@@ -65,8 +65,8 @@ class VirtualJoystick extends eui.Component{
                 this.touchID = e.touchPointID;
                 this.x = e.stageX;
                 this.y = e.stageY;
-                this.ball.x = this.centerX;
-                this.ball.y = this.centerY;
+                this.ball.x = this.centerX - this.ball.width/2;
+                this.ball.y = this.centerY - this.ball.width/2;
                 this.layer.stage.addChild(this);
  
                 this.dispatchEvent(new egret.Event("vj_start"));
@@ -97,12 +97,12 @@ class VirtualJoystick extends eui.Component{
                 var angle:number = Math.atan2(e.stageY - this.y, e.stageX - this.x);
                 //手指距离在圆环范围内
                 if(dist <= (this.circleRadius - this.ballRadius)){
-                        this.ball.x = this.centerX + e.stageX - this.x;
-                        this.ball.y = this.centerY + e.stageY - this.y;
+                        this.ball.x = this.centerX - this.ball.width/2 + e.stageX - this.x;
+                        this.ball.y = this.centerY - this.ball.height/2 + e.stageY - this.y;
                 //手指距离在圆环范围外
                 }else{
-                        this.ball.x = Math.cos(angle)*(this.circleRadius - this.ballRadius) + this.centerX;
-                        this.ball.y = Math.sin(angle)*(this.circleRadius - this.ballRadius) + this.centerY;
+                        this.ball.x = Math.cos(angle)*(this.circleRadius - this.ballRadius) + this.centerX - this.ball.width/2;
+                        this.ball.y = Math.sin(angle)*(this.circleRadius - this.ballRadius) + this.centerY - this.ball.height/2;
                 }
                 //派发事件
                 this.dispatchEventWith("vj_move", false, angle);
