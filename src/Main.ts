@@ -308,15 +308,22 @@ class Main extends eui.UILayer {
 
     // check collision
     private checkCollision() {
-        let rectSquirrel:egret.Rectangle = this.squirrel.getBounds();
+        let rectSquirrel:egret.Rectangle;
+        this.squirrel.getBounds(rectSquirrel, true);
+        rectSquirrel.x = this.squirrel.x;
+        rectSquirrel.y = this.squirrel.y;
 
         for (let fruit of this.arrayFruit) {
             if (fruit.y > this.stage.stageHeight) {
                 this.removeChild(fruit);
+                console.log("out of border, removed!")
                 continue;
             }
 
-            let rectFruit:egret.Rectangle = fruit.getBounds();
+            let rectFruit:egret.Rectangle;
+            fruit.getBounds(rectFruit, true);
+            rectFruit.x = fruit.x;
+            rectFruit.y = fruit.y;
             if (rectSquirrel.intersects(rectFruit)) {
                 console.log("collision!");
                 this.removeChild(fruit);
