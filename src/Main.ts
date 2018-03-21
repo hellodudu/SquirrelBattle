@@ -269,6 +269,7 @@ class Main extends eui.UILayer {
         this.squirrel.y = this.stage.stageHeight / 2;
 
         this.cdTimer.start();
+        this.heartBeats.start();
 
         //开启虚拟摇杆
         this.vj.start();
@@ -308,25 +309,26 @@ class Main extends eui.UILayer {
 
     // check collision
     private checkCollision() {
-        let rectSquirrel:egret.Rectangle;
+        let rectSquirrel:egret.Rectangle = new egret.Rectangle();
         this.squirrel.getBounds(rectSquirrel, true);
         rectSquirrel.x = this.squirrel.x;
         rectSquirrel.y = this.squirrel.y;
 
-        for (let fruit of this.arrayFruit) {
-            if (fruit.y > this.stage.stageHeight) {
-                this.removeChild(fruit);
-                console.log("out of border, removed!")
+        for (let index = this.arrayFruit.length - 1; index >= 0; index -= 1) {
+            if (this.arrayFruit[index].y > this.stage.stageHeight) {
+                this.removeChild(this.arrayFruit[index]);
+                this.arrayFruit.splice(index, 1);
                 continue;
             }
 
-            let rectFruit:egret.Rectangle;
-            fruit.getBounds(rectFruit, true);
-            rectFruit.x = fruit.x;
-            rectFruit.y = fruit.y;
+            let rectFruit:egret.Rectangle = new egret.Rectangle();
+            this.arrayFruit[index].getBounds(rectFruit, true);
+            rectFruit.x = this.arrayFruit[index].x;
+            rectFruit.y = this.arrayFruit[index].y;
             if (rectSquirrel.intersects(rectFruit)) {
-                console.log("collision!");
-                this.removeChild(fruit);
+                this.removeChild(this.arrayFruit[index]);
+                this.arrayFruit.splice(index, 1);
+                continue;
             }
         }
     }
