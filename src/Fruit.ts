@@ -29,4 +29,7 @@ class Fruit extends egret.Sprite {
         this.speed = s;
     }
     
+    public getFruitType() {
+        return this.type;
+    }
 }

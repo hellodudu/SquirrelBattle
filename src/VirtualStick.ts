@@ -95,17 +95,22 @@ class VirtualJoystick extends eui.Component{
                 this.p2.y = e.stageY;
                 var dist = egret.Point.distance(this.p1, this.p2);
                 var angle:number = Math.atan2(e.stageY - this.y, e.stageX - this.x);
+
+                let bSlowSpeed = false;
+
                 //手指距离在圆环范围内
                 if(dist <= (this.circleRadius - this.ballRadius)){
                         this.ball.x = this.centerX - this.ball.width/2 + e.stageX - this.x;
                         this.ball.y = this.centerY - this.ball.height/2 + e.stageY - this.y;
+                        bSlowSpeed = true;
                 //手指距离在圆环范围外
                 }else{
                         this.ball.x = Math.cos(angle)*(this.circleRadius - this.ballRadius) + this.centerX - this.ball.width/2;
                         this.ball.y = Math.sin(angle)*(this.circleRadius - this.ballRadius) + this.centerY - this.ball.height/2;
+                        bSlowSpeed = false;
                 }
                 //派发事件
-                this.dispatchEventWith("vj_move", false, angle);
+                this.dispatchEventWith("vj_move", false, [angle, bSlowSpeed]);
         }
  
         private hide(){

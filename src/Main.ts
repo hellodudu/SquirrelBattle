@@ -100,6 +100,8 @@ class Main extends eui.UILayer {
     private heartBeats: egret.Timer;
     private vj: VirtualJoystick;
     private squirrel: Squirrel;
+    private pineConeCombat: number;
+    private score: number;
     private arrayFruit: Fruit[] = new Array();
 
     /**
@@ -234,8 +236,9 @@ class Main extends eui.UILayer {
 
     //触摸摇杆的角度改变，人物的移动速度方向也随之改变
     private onVJChange(e:egret.Event){
-        let angle = e.data;
-        let speed = this.squirrel.getSpeed();
+        let angle:number = e.data[0];
+        let bSlowSpeed:boolean = e.data[1];
+        let speed = (bSlowSpeed ? this.squirrel.getSpeed() / 2 : this.squirrel.getSpeed());
         this.squirrel.setSpeedX(Math.cos(angle) * speed);
         this.squirrel.setSpeedY(Math.sin(angle) * speed);
         this.squirrel.scaleX = (Math.cos(angle) > 0) ? -1 : 1;
@@ -276,6 +279,10 @@ class Main extends eui.UILayer {
         this.vj.addEventListener("vj_start",this.onVJStart, this);
         this.vj.addEventListener("vj_move", this.onVJChange, this);
         this.vj.addEventListener("vj_end", this.onVJEnd, this);
+
+        // 游戏初始化
+        this.pineConeCombat = 0;
+        this.score = 0;
     }
 
     // count down
@@ -315,21 +322,48 @@ class Main extends eui.UILayer {
         rectSquirrel.y = this.squirrel.y;
 
         for (let index = this.arrayFruit.length - 1; index >= 0; index -= 1) {
+            // 超出stage坐标
             if (this.arrayFruit[index].y > this.stage.stageHeight) {
                 this.removeChild(this.arrayFruit[index]);
                 this.arrayFruit.splice(index, 1);
                 continue;
             }
 
+            // 和松鼠检测碰撞
             let rectFruit:egret.Rectangle = new egret.Rectangle();
             this.arrayFruit[index].getBounds(rectFruit, true);
             rectFruit.x = this.arrayFruit[index].x;
             rectFruit.y = this.arrayFruit[index].y;
             if (rectSquirrel.intersects(rectFruit)) {
+                let type:FruitType = this.arrayFruit[index].getFruitType();
+                this.handleEatFruit(type);
                 this.removeChild(this.arrayFruit[index]);
                 this.arrayFruit.splice(index, 1);
                 continue;
             }
         }
+    }
+
+    private handleEatFruit(type:FruitType) {
+        this.pineConeCombat = (type == FruitType.PineCone) ? this.pineConeCombat + 1 : 0;
+        let addScore = function () : number {
+            switch(this.pineConeCombat) {
+                case 0:
+                case 1:
+                    return 5;
+                case 2:
+                    return 6;
+                case 3:
+                    return 8;
+                case 4:
+                    return 10;
+                default:
+                    return 10;
+            }
+        }();
+
+        this.score += (type == FruitType.PineCone) ? addScore : 0;
+
+        // todo score ui refresh
     }
 }
