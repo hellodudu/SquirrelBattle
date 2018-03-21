@@ -1,6 +1,6 @@
 class Squirrel extends egret.Sprite {
     private bm: egret.Bitmap;
-    private speed: number = 15;
+    private speed: number = 12;
     private speedX: number = 0;
     private speedY: number = 0;
 

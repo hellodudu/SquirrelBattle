@@ -94,7 +94,8 @@ class Main extends eui.UILayer {
         })
     }
 
-    private cdTextField: egret.TextField;
+    private cdTF: egret.TextField;
+    private scoreTF: egret.TextField;
     private startButton: eui.Button;
     private cdTimer: egret.Timer;
     private heartBeats: egret.Timer;
@@ -135,13 +136,22 @@ class Main extends eui.UILayer {
 
         // count down
         let textfield = new egret.TextField();
-        textfield.width = stageW - 172;
+        textfield.width = 200;
         textfield.textAlign = egret.HorizontalAlign.CENTER;
         textfield.size = 24;
         textfield.text = "倒计时：60";
         textfield.x = 0;
         textfield.y = 30;
-        this.cdTextField = textfield;
+        this.cdTF = textfield;
+
+        let tfScore = new egret.TextField();
+        tfScore.width = 200;
+        tfScore.textAlign = egret.HorizontalAlign.CENTER;
+        tfScore.size = 24;
+        tfScore.text = "得分：0";
+        tfScore.x = 0;
+        tfScore.y = 130;
+        this.scoreTF = tfScore;
 
         // cd Timer
         let timer = new egret.Timer(1000, 60);
@@ -265,7 +275,8 @@ class Main extends eui.UILayer {
 
     private onStartButtonClick(e: egret.TouchEvent) {
         this.removeChild(this.startButton);
-        this.addChild(this.cdTextField);
+        this.addChild(this.cdTF);
+        this.addChild(this.scoreTF);
 
         this.addChild(this.squirrel);
         this.squirrel.x = this.stage.stageWidth / 2;
@@ -287,7 +298,7 @@ class Main extends eui.UILayer {
 
     // count down
     private countDownFunc() {
-        this.cdTextField.text = "倒计时：" + (60 - this.cdTimer.currentCount);
+        this.cdTF.text = "倒计时：" + (60 - this.cdTimer.currentCount);
 
         this.createFruit(FruitType.Apple);
         this.createFruit(FruitType.PineCone);
@@ -346,24 +357,23 @@ class Main extends eui.UILayer {
 
     private handleEatFruit(type:FruitType) {
         this.pineConeCombat = (type == FruitType.PineCone) ? this.pineConeCombat + 1 : 0;
-        let addScore = function () : number {
-            switch(this.pineConeCombat) {
-                case 0:
-                case 1:
-                    return 5;
-                case 2:
-                    return 6;
-                case 3:
-                    return 8;
-                case 4:
-                    return 10;
-                default:
-                    return 10;
-            }
-        }();
+        
+        let addScore = 0;
+        if (this.pineConeCombat >= 4) {
+            addScore = 10;
+        }
+        else if (this.pineConeCombat >= 3) {
+            addScore = 8;
+        }
+        else if (this.pineConeCombat >= 2) {
+            addScore = 6;
+        }
+        else if (this.pineConeCombat == 1 || this.pineConeCombat == 0) {
+            addScore = 5;
+        }
 
         this.score += (type == FruitType.PineCone) ? addScore : 0;
 
-        // todo score ui refresh
+        this.scoreTF.text = "得分：" + this.score;
     }
 }
